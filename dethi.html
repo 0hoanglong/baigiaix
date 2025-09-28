@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiaiToan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="theme-toggle" title="Chuyển chế độ Sáng/Tối">⚫</button>
+    <div id="selection-container">
+        <h1>Chọn đề bài Thi</h1>
+        <h5>XIN ĐỪNG TIẾT LỘ TRANG WEB VỚI BẤT KÌ AI</h5>
+        <div class="grade-block" data-khoi="12">
+            <div class="grade-title">Khối 12</div>
+            <div class="time-block" data-phut="45">
+                <div class="time-title">45 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+            <div class="time-block" data-phut="90">
+                <div class="time-title">90 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+        </div>
+        <div class="grade-block" data-khoi="11">
+            <div class="grade-title">Khối 11</div>
+            <div class="time-block" data-phut="45">
+                <div class="time-title">45 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+            <div class="time-block" data-phut="90">
+                <div class="time-title">90 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+        </div>
+        <div class="grade-block" data-khoi="10">
+            <div class="grade-title">Khối 10</div>
+            <div class="time-block" data-phut="45">
+                <div class="time-title">45 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+            <div class="time-block" data-phut="90">
+                <div class="time-title">90 phút</div>
+                <div class="button-group">
+                    <button class="exam-button">A</button>
+                    <button class="exam-button">B</button>
+                    <button class="exam-button">C</button>
+                    <button class="exam-button">D</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewer-container" class="hidden">
+        <button id="back-button">← Quay lại chọn đề</button>
+        <iframe id="pdf-viewer" src="about:blank" frameborder="0"></iframe>
+    </div>
+    <script src="script2.js"></script>
+</body>
+</html>
