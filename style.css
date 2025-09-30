@@ -152,3 +152,117 @@
                 text-align: center;
             }
         }
+/* --- CSS BỔ SUNG CHO FORM NHẬP LIỆU --- */
+
+#login-form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode #login-form-container {
+    background-color: #1e1e1e;
+}
+
+#login-form-container h1 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--dark-gray);
+}
+
+.input-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box; 
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+}
+
+body.dark-mode .input-group input[type="text"] {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+#submit-info-btn {
+    background-color: #28a745; /* Màu xanh lá cho nút gửi */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+#submit-info-btn:hover {
+    background-color: #1e7e34;
+}
+
+#log-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.log-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.log-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* --- CSS BỔ SUNG CHO NÚT XÓA DỮ LIỆU (Đã cập nhật) --- */
+
+#clear-data-button {
+    margin-top: 30px; 
+    margin-left: 20px;
+    
+    background-color: #dc3545; /* Màu đỏ cho chức năng xóa */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#clear-data-button:hover {
+    background-color: #c82333;
+}
+
+body.dark-mode #clear-data-button {
+    background-color: #9a2533;
+}
+body.dark-mode #clear-data-button:hover {
+    background-color: #6e1c26;
+}
