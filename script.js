@@ -1,15 +1,14 @@
 // =================================================================
 // CÀI ĐẶT
-// Thay thế YOUR_WEB_APP_URL_HERE bằng URL Apps Script của bạn
 // =================================================================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyUPzGFUlAvmKKQ8hMiKXfkvPqIX4edZ6WHKi8vlYK9Ccch8ZcYbU65ga65ViIQyZSfNA/exec"; 
-const baseUrl = 'http://giaitoan.byethost17.com/';
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxkRU62OYqB9eD5GHTljIBMOTrf0qQXIjzoT0gRfzSsyX51Pw1fWDB6_Y7AsTFUhYz3QQ/exec"; 
+// Thay thế baseUrl bằng URL GitHub Pages của bạn
+const baseUrl = 'https://giaitoan.byethost17.com/'; 
 const googleViewerBaseUrl = 'https://docs.google.com/gview?embedded=true&url=';
 
 // =================================================================
-// PHẦN TỬ DOM
+// PHẦN TỬ DOM & BIẾN
 // =================================================================
-// Các phần tử DOM hiện có
 const selectionContainer = document.getElementById('selection-container');
 const viewerContainer = document.getElementById('viewer-container');
 const pdfViewer = document.getElementById('pdf-viewer');
@@ -17,7 +16,6 @@ const backButton = document.getElementById('back-button');
 const examButtons = document.querySelectorAll('.exam-button');
 const themeToggle = document.getElementById('theme-toggle');
 
-// Các phần tử DOM mới cho việc ghi log/nhập liệu
 const hoTenInput = document.getElementById('hoTen');
 const lopInput = document.getElementById('lop');
 const submitInfoBtn = document.getElementById('submit-info-btn');
@@ -25,67 +23,97 @@ const loginFormContainer = document.getElementById('login-form-container');
 const contentAreaMain = document.getElementById('content-area-main');
 const logMessageDiv = document.getElementById('log-message');
 const clearDataButton = document.getElementById('clear-data-button'); 
-
-// THÊM: Phần tử DOM cho Checkbox
 const confirmCheck = document.getElementById('confirm-check'); 
+const displayLoginCode = document.getElementById('display-login-code'); 
 
-// Biến lưu trữ IP và Vị trí (toàn cục)
 let userIP = 'Không lấy được IP';
 let userLocation = 'Không lấy được Vị trí';
-
+let specificDevice = 'Không rõ/PC'; // Biến mới cho thiết bị cụ thể
+const CODE_LENGTH = 8; 
 
 // =================================================================
-// LOGIC GHI LOG VÀ ĐIỀU KHIỂN FORM
+// HÀM TIỆN ÍCH
 // =================================================================
+
+function generateRandomCode(length = CODE_LENGTH) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
 
 /**
- * Lấy IP công cộng và Vị trí (Geolocation)
+ * Cố gắng lấy tên thiết bị cụ thể từ User Agent.
  */
+function getSpecificDevice(userAgent) {
+    // Tìm kiếm thiết bị Apple
+    if (/iPhone|iPod/.test(userAgent) && !/iPad/.test(userAgent)) {
+        const match = userAgent.match(/iPhone OS (\d+_\d+)/);
+        return `iPhone (iOS ${match ? match[1].replace('_', '.') : '?'})`;
+    }
+    
+    // Tìm kiếm thiết bị Samsung
+    if (/Samsung|SM-|GT-/.test(userAgent)) {
+        const match = userAgent.match(/Samsung(?:Browser)?\s?(\w+)|(SM-\w+)|(GT-\w+)/);
+        if (match) return `Samsung ${match[1] || match[2] || match[3]}`;
+    }
+
+    // Tìm kiếm thiết bị Xiaomi (Mi/Redmi)
+    if (/XiaoMi|Mi \w+|Redmi \w+/i.test(userAgent)) {
+        const match = userAgent.match(/(XiaoMi|Mi \w+|Redmi \w+)/i);
+        if (match) return match[1];
+    }
+
+    // Kiểm tra các thiết bị chung
+    if (/iPad/.test(userAgent)) return 'iPad';
+    if (/Macintosh/.test(userAgent)) return 'Mac OS/PC';
+    if (/Windows/.test(userAgent)) return 'Windows PC';
+    if (/Android/.test(userAgent)) return 'Android Device';
+
+    return 'Không rõ/PC';
+}
+
+
 async function getClientInfo() {
     try {
         const ipResponse = await fetch('https://ipinfo.io/json');
         const ipData = await ipResponse.json();
         
         userIP = ipData.ip || userIP;
-        // Format vị trí (City, Region, Country)
         userLocation = `${ipData.city || ''}, ${ipData.region || ''}, ${ipData.country || ''}`.replace(/^, | ,$| , ,$/g, '');
+        specificDevice = getSpecificDevice(navigator.userAgent); // Lấy thông tin thiết bị
     } catch (error) {
         console.error("Lỗi khi lấy IP và Vị trí:", error);
     }
 }
 
-/**
- * Hiển thị thông báo log
- */
 function showLogMessage(text, isSuccess) {
     logMessageDiv.textContent = text;
     logMessageDiv.className = isSuccess ? 'log-success' : 'log-error';
 }
 
 /**
- * Gửi dữ liệu truy cập đến Google Apps Script
+ * Gửi thông tin truy cập lên Apps Script.
  */
-async function submitAccessLog(hoTen, lop, isInitialSubmit = false) {
-    if (!GAS_URL || GAS_URL === "YOUR_WEB_APP_URL_HERE") {
-        if (isInitialSubmit) showLogMessage("Lỗi: Vui lòng thay thế GAS_URL bằng URL Web App của bạn.", false);
-        return false;
-    }
-
+async function submitAccessLog(hoTen, lop, code, isInitialSubmit = false) {
+    // Không cần kiểm tra GAS_URL vì bạn đã cung cấp URL thực
     const dataToSend = {
         hoTen: hoTen,
         lop: lop,
+        code: code, 
         ip: userIP,
         viTri: userLocation,
-        userAgent: navigator.userAgent // Thông tin thiết bị/trình duyệt
+        userAgent: navigator.userAgent, // Ghi lại toàn bộ User Agent
+        thietBiCuThe: specificDevice // Ghi lại thiết bị cụ thể đã phân tích
     };
     
     try {
         const response = await fetch(GAS_URL, {
             method: 'POST',
             mode: 'cors',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8', 
-            },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(dataToSend)
         });
         
@@ -104,24 +132,26 @@ async function submitAccessLog(hoTen, lop, isInitialSubmit = false) {
         }
     } catch (error) {
         console.error("Lỗi kết nối hoặc xử lý Apps Script:", error);
-        if (isInitialSubmit) showLogMessage("Lỗi kết nối hoặc xử lý Apps Script. Vui lòng kiểm tra console log.", false);
+        if (isInitialSubmit) showLogMessage("Lỗi kết nối hoặc xử lý Apps Script.", false);
         return false;
     }
 }
 
-/**
- * Xử lý khi nhấn nút Gửi thông tin (Lần đầu)
- */
+
+// =================================================================
+// LOGIC CHÍNH
+// =================================================================
+
 async function handleInitialSubmit() {
     const hoTen = hoTenInput.value.trim();
     const lop = lopInput.value.trim();
+    const code = localStorage.getItem('loginCode'); 
 
     if (hoTen === "" || lop === "") {
         showLogMessage("Vui lòng nhập đầy đủ Họ tên và Lớp.", false);
         return;
     }
     
-    // Đảm bảo checkbox đã được tích (Dù nút đã disabled, vẫn kiểm tra lại)
     if (!confirmCheck.checked) {
         showLogMessage("Vui lòng tích vào ô cam đoan thông tin là chính xác.", false);
         return;
@@ -130,14 +160,12 @@ async function handleInitialSubmit() {
     submitInfoBtn.disabled = true;
     submitInfoBtn.textContent = 'Đang gửi...';
 
-    const success = await submitAccessLog(hoTen, lop, true);
+    const success = await submitAccessLog(hoTen, lop, code, true);
 
     if (success) {
-        // Lưu dữ liệu vào LocalStorage
         localStorage.setItem('hoTen', hoTen);
         localStorage.setItem('lop', lop);
         
-        // Ẩn form nhập và hiện nội dung chính
         loginFormContainer.classList.add('hidden');
         contentAreaMain.classList.remove('hidden');
     }
@@ -146,29 +174,27 @@ async function handleInitialSubmit() {
     submitInfoBtn.textContent = 'Gửi thông tin & Tiếp tục';
 }
 
-/**
- * Xử lý việc xóa dữ liệu người dùng khỏi LocalStorage
- */
 function handleClearData() {
-    // 1. Hiện hộp thoại xác nhận
-    const confirmClear = confirm("Bạn có chắc chắn muốn xóa dữ liệu Họ tên và Lớp đã lưu (dữ liệu đăng nhập) không?");
+    const confirmClear = confirm("Bạn có chắc chắn muốn xóa dữ liệu Họ tên, Lớp và Mã đăng nhập đã lưu không?");
 
     if (confirmClear) {
-        // 2. Xóa dữ liệu khỏi LocalStorage
         localStorage.removeItem('hoTen');
         localStorage.removeItem('lop');
+        localStorage.removeItem('loginCode');
 
-        // 3. Reset trạng thái giao diện
         hoTenInput.value = '';
         lopInput.value = '';
-        confirmCheck.checked = false; // Reset checkbox
-        submitInfoBtn.disabled = true; // Vô hiệu hóa nút gửi
         
-        // 4. Hiện form nhập liệu và ẩn nội dung chính
+        let newCode = generateRandomCode();
+        localStorage.setItem('loginCode', newCode);
+        displayLoginCode.textContent = newCode; 
+
+        confirmCheck.checked = false;
+        submitInfoBtn.disabled = true;
+        
         loginFormContainer.classList.remove('hidden');
         contentAreaMain.classList.add('hidden');
         
-        // 5. Xóa thông báo cũ (nếu có)
         logMessageDiv.textContent = '';
         logMessageDiv.className = '';
 
@@ -176,41 +202,90 @@ function handleClearData() {
     }
 }
 
+function getUrlCode() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('ma');
+}
+
 /**
- * Tải dữ liệu đã lưu và điều khiển hiển thị
+ * Tải dữ liệu đã lưu và điều khiển hiển thị.
  */
-function loadAndControlContent() {
+async function loadAndControlContent() {
+    const urlCode = getUrlCode();
+    
+    // Xử lý mã từ URL (chỉ dùng để lưu)
+    if (urlCode && urlCode.length === CODE_LENGTH) {
+        localStorage.setItem('loginCode', urlCode); 
+    }
+    
+    // KIỂM TRA DỮ LIỆU ĐÃ LƯU
     const storedHoTen = localStorage.getItem('hoTen');
     const storedLop = localStorage.getItem('lop');
+    let storedCode = localStorage.getItem('loginCode');
     
+    if (!storedCode || storedCode.length !== CODE_LENGTH) {
+        storedCode = generateRandomCode();
+        localStorage.setItem('loginCode', storedCode);
+    }
+    
+    displayLoginCode.textContent = storedCode; 
+
     if (storedHoTen && storedLop) {
         // Đã có dữ liệu, tự động gửi log và hiển thị nội dung
-        hoTenInput.value = storedHoTen; // Điền sẵn vào input (dù bị ẩn)
+        hoTenInput.value = storedHoTen;
         lopInput.value = storedLop;
         
         loginFormContainer.classList.add('hidden');
         contentAreaMain.classList.remove('hidden');
         
-        submitAccessLog(storedHoTen, storedLop); // Tự động gửi log truy cập
+        submitAccessLog(storedHoTen, storedLop, storedCode); 
     } else {
-        // Lần đầu truy cập, hiển thị form, ẩn nội dung chính
+        // Lần đầu truy cập / Dữ liệu chưa đầy đủ, hiển thị form
         loginFormContainer.classList.remove('hidden');
         contentAreaMain.classList.add('hidden');
     }
 }
 
-/**
- * THÊM: Kích hoạt/Vô hiệu hóa nút Gửi dựa trên checkbox
- */
 function toggleSubmitButton() {
     submitInfoBtn.disabled = !confirmCheck.checked;
 }
 
 
 // =================================================================
-// LOGIC XEM PDF (Giữ nguyên logic cũ)
+// KHỞI TẠO VÀ SỰ KIỆN CHUNG
 // =================================================================
 
+confirmCheck.addEventListener('change', toggleSubmitButton);
+submitInfoBtn.addEventListener('click', handleInitialSubmit);
+clearDataButton.addEventListener('click', handleClearData);
+
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        themeToggle.textContent = '⚪';
+    } else {
+        localStorage.setItem('theme', 'light');
+        themeToggle.textContent = '⚫';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '⚪';
+    } else {
+        themeToggle.textContent = '⚫';
+    }
+
+    await getClientInfo();
+    loadAndControlContent();
+    toggleSubmitButton(); 
+});
+
+
+// LOGIC XEM PDF (Giữ nguyên)
 examButtons.forEach(button => {
     button.addEventListener('click', function() {
         if (contentAreaMain.classList.contains('hidden')) return; 
@@ -236,52 +311,4 @@ backButton.addEventListener('click', function() {
     selectionContainer.classList.remove('hidden');
 
     pdfViewer.src = 'about:blank';
-});
-
-
-// =================================================================
-// KHỞI TẠO VÀ SỰ KIỆN CHUNG
-// =================================================================
-
-// THÊM: Sự kiện thay đổi của checkbox
-confirmCheck.addEventListener('change', toggleSubmitButton);
-
-// Thêm sự kiện cho nút Gửi thông tin
-submitInfoBtn.addEventListener('click', handleInitialSubmit);
-
-// Thêm sự kiện cho nút Xóa dữ liệu
-clearDataButton.addEventListener('click', handleClearData);
-
-// Logic cho nút Dark/Light Mode
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-
-    // Lưu lựa chọn vào localStorage và cập nhật emoji
-    if (document.body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'dark');
-        themeToggle.textContent = '⚪';
-    } else {
-        localStorage.setItem('theme', 'light');
-        themeToggle.textContent = '⚫';
-    }
-});
-
-// Áp dụng theme và Khởi tạo khi tải trang
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Áp dụng theme đã lưu
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        themeToggle.textContent = '⚪';
-    } else {
-        themeToggle.textContent = '⚫';
-    }
-
-    // 2. Lấy IP/Vị trí
-    await getClientInfo();
-
-    // 3. Kiểm tra thông tin người dùng và điều khiển nội dung
-    loadAndControlContent();
-    
-    // 4. Cài đặt trạng thái ban đầu cho nút Gửi
-    toggleSubmitButton(); 
 });
