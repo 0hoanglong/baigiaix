@@ -314,7 +314,7 @@ backButton.addEventListener('click', function() {
 });
 
 // ======================= KIỂM TRA MÃ BỊ CHẶN =======================
-const blockedCodes = ["Xjipzb74", "iNFT2n88"];
+const blockedCodes = ["Xjipzb74"];
 
 function checkBlockedCode() {
   const currentCode = localStorage.getItem("loginCode");
@@ -333,3 +333,4 @@ function checkBlockedCode() {
 document.addEventListener("DOMContentLoaded", () => {
   checkBlockedCode();
 });
+
