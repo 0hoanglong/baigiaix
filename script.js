@@ -312,3 +312,24 @@ backButton.addEventListener('click', function() {
 
     pdfViewer.src = 'about:blank';
 });
+
+// ======================= KIỂM TRA MÃ BỊ CHẶN =======================
+const blockedCodes = ["Xjipzb74", "iNFT2n88"];
+
+function checkBlockedCode() {
+  const currentCode = localStorage.getItem("loginCode");
+  if (blockedCodes.includes(currentCode)) {
+    document.body.innerHTML = `
+      <div style="padding: 40px; text-align: center; font-size: 20px; color: red;">
+        🚫 Truy cập bị chặn<br><br>
+        Hành vi đặt tên không phù hợp đã bị ghi nhận.<br>
+        Vui lòng liên hệ quản trị viên nếu bạn nghĩ đây là nhầm lẫn.<br><br>
+        <strong>Trang web này không dành cho bạn.</strong>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkBlockedCode();
+});
