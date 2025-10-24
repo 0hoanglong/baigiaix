@@ -1,0 +1,315 @@
+        /* --- Cài đặt chung & Biến màu --- */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --background-color: #f0f2f5;
+            --text-color: #333;
+            --light-text-color: #555;
+            --border-color: #ccc;
+            --white-color: #fff;
+            --error-bg-color: #f8d7da;
+            --error-text-color: #721c24;
+
+            /* Biến màu Neon cho các gói */
+            --neon-normal: hsl(186, 100%, 50%);
+            --neon-vip: hsl(250, 100%, 50%);
+            --neon-vip-plus: hsl(317, 100%, 50%);
+            --neon-admin: hsl(50, 100%, 50%);
+        }
+        *, *::before, *::after {
+            box-sizing: border-box; /* Đảm bảo tính toán kích thước nhất quán */
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 1rem;
+        }
+        #login-section, #content-section {
+            background-color: var(--white-color);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px; /* Giới hạn chiều rộng cho form đăng nhập */
+            margin: 0 auto; /* Căn giữa */
+        }
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--light-text-color);
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        button:hover:not(:disabled) {
+            background-color: var(--primary-hover-color);
+        }
+        button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        #message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            display: none; /* Ẩn ban đầu */
+        }
+        .error {
+            background-color: var(--error-bg-color);
+            color: var(--error-text-color);
+        }
+        .hidden {
+            display: none;
+        }
+
+        /* --- Wrapper cho ô mật khẩu --- */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px; /* Chuyển margin từ input sang wrapper */
+        }
+        .password-wrapper input {
+            margin-bottom: 0; /* Xóa margin của input */
+            padding-right: 45px; /* Thêm không gian cho nút */
+        }
+        #toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 45px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            font-size: 1.2rem;
+            transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+            height: 100%; /* Giữ lại để vùng click lớn */
+        }
+
+        /* --- Phần Nội dung & Chọn đề --- */
+        #content-section {
+            max-width: 900px; /* Mở rộng cho nội dung */
+        }
+        .grade-selection {
+            margin-top: 20px;
+        }
+        .grade-selection .grade-title { font-weight: bold; text-align: center; }
+        .grade-selection .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Căn giữa các nút theo chiều ngang */
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .grade-selection button {
+            flex-basis: 50px; /* Đặt chiều rộng cơ bản cho mỗi nút */
+            background-color: #e9ecef;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+        .grade-selection button:hover:not(:disabled) {
+            background-color: #d1d5da;
+        }
+        .grade-selection button.selected {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        /* --- CSS cho Bảng thông báo (Modal) --- */
+        .viewer-panel {
+            position: fixed; /* Nằm cố định trên màn hình */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Lớp nền mờ đậm hơn */
+            display: none; /* Ẩn ban đầu */
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1000; /* Luôn nằm trên cùng */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .viewer-panel.visible {
+            display: flex; /* Hiện ra khi có class 'visible' */
+            opacity: 1;
+        }
+        .viewer-content {
+            background-color: var(--white-color);
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px; /* Giới hạn chiều rộng trên desktop */
+            max-height: 95vh; /* Giới hạn chiều cao trên desktop */
+            display: flex;
+            flex-direction: column;
+        }
+        #back-button {
+            width: auto; /* Nút chỉ rộng vừa đủ nội dung */
+            padding: 8px 15px;
+            margin-bottom: 10px;
+            flex-shrink: 0; /* Không co lại */
+        }
+        .baigiai {
+            flex-grow: 1; /* Chiếm hết không gian còn lại */
+            display: block;
+        }
+        .viewer-content iframe {
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- Responsive cho màn hình nhỏ --- */
+        @media (max-width: 600px) {
+            .container { padding: 0; } /* Loại bỏ padding của container chính */
+            #login-section { padding: 2rem 1.25rem; border-radius: 0; box-shadow: none; }
+            #content-section { padding: 2rem 1.25rem; border-radius: 0; box-shadow: none; }
+            .viewer-content { padding: 10px; border-radius: 0; max-height: 100%; }
+        }
+
+        /* --- Nút Chuyển Chủ đề --- */
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 22px;
+            line-height: 45px;
+            padding: 0;
+            text-align: center;
+            z-index: 1001; /* Nằm trên cả lớp phủ modal */
+        }
+        body.dark-mode #toggle-password {
+            color: #bbb; /* Làm cho icon mắt dễ nhìn hơn trên nền tối */
+        }
+
+        /* --- Chủ đề Tối (Dark Mode) --- */
+        body.dark-mode {
+            --primary-color: #0d6efd;
+            --primary-hover-color: #3385fd;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --light-text-color: #a0a0a0;
+            --border-color: #444;
+            --white-color: #1e1e1e; /* Màu nền của các card */
+            --error-bg-color: #572023;
+            --error-text-color: #f8d7da;
+        }
+        body.dark-mode .grade-selection button {
+            background-color: #333;
+            color: var(--text-color);
+        }
+        body.dark-mode .grade-selection button:hover:not(:disabled) {
+            background-color: #444;
+        }
+        body.dark-mode .grade-selection button.selected {
+            background-color: var(--primary-color);
+            color: #fff; /* Đảm bảo chữ trắng trên nền xanh */
+        }
+
+        /* --- Nút Đăng xuất --- */
+        #logout-button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 30px auto 0;
+            display: block;
+            background-color: #6c757d;
+        }
+        #logout-button:hover {
+            background-color: #5a6268;
+        }
+
+        /* --- Link Đăng ký --- */
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Keyframes cho hiệu ứng Neon --- */
+        @keyframes neon-text-glow {
+            from {
+                text-shadow: 0 0 5px rgba(255,255,255,0.8), 0 0 10px var(--glow-color), 0 0 15px var(--glow-color);
+            }
+            to {
+                text-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 20px var(--glow-color), 0 0 30px var(--glow-color);
+            }
+        }
+
+        /* --- CSS cho màu Neon của tên người dùng --- */
+        #username-display {
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .package-normal {
+            color: #fff;
+            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
+        }
+        .package-vip {
+            color: #fff;
+            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
+        }
+        .package-vip-plus {
+            color: #fff;
+            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
+        }
+        .package-admin {
+            color: var(--neon-admin);
+            text-shadow: 0 0 4px var(--neon-admin), 0 0 8px var(--neon-admin);
+        }
+        body.dark-mode #username-display {
+            /* Tăng cường độ sáng trên nền tối */
+            color: #fff; /* Giữ màu chữ trắng để hiệu ứng shadow nổi bật */
+            text-shadow: 0 0 6px var(--glow-color), 0 0 12px var(--glow-color), 0 0 18px var(--glow-color);
+        }
