@@ -313,3 +313,28 @@
             color: #fff; /* Giữ màu chữ trắng để hiệu ứng shadow nổi bật */
             text-shadow: 0 0 6px var(--glow-color), 0 0 12px var(--glow-color), 0 0 18px var(--glow-color);
         }
+
+        /* --- CSS cho nhân vật Sakana --- */
+        #sakana-modal {
+            position: fixed;
+            /* Đặt ở dưới chân trang */
+            bottom: 0;
+            left: 0;
+            right: 0;
+            /* Dàn các nhân vật ra hai bên */
+            display: flex;
+            justify-content: space-between;
+            /* Đảm bảo luôn nổi lên trên */
+            z-index: 1002;
+            /* Cho phép click xuyên qua vùng trống */
+            pointer-events: none;
+        }
+
+        .sakana-box-l, .sakana-box-r {
+            pointer-events: auto; /* Cho phép tương tác với nhân vật */
+        }
+
+        /* Ẩn nhân vật trên màn hình nhỏ (Mobile) - Đặt ở cuối để ghi đè */
+        @media (max-width: 768px) {
+            #sakana-modal { display: none !important; }
+        }
