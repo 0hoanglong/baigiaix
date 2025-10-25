@@ -72,11 +72,40 @@
                 </div>
             </div>
         </div>
-
+    </div>
+    
+    <div id="sakana-modal">
+        <div class="sakana-box-l"></div>
+        <div class="sakana-box-r"></div>
     </div>
     <script src="script.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sakana"></script>
+    <script>
+        // Tắt âm thanh của nhân vật.
+        Sakana.setMute(false);
+
+        // Khởi tạo nhân vật thứ nhất (Takina)
+            Sakana.init({
+                el: ".sakana-box-l",      // Đặt nhân vật vào thẻ có class "sakana-box-l"
+                scale: .5,               // Tỷ lệ kích thước: 50% so với gốc
+                character: "takina",     // Chọn nhân vật là "takina"
+                canSwitchCharacter: false, // Không cho phép người dùng đổi nhân vật
+                inertia: .005,           // Quán tính: độ lắc lư sau khi kéo thả
+                decay: 1                 // Độ suy giảm: tốc độ dừng lại của chuyển động
+            }),
+        // Khởi tạo nhân vật thứ hai (Chisato)
+            Sakana.init({
+                el: ".sakana-box-r",      // Đặt nhân vật vào thẻ có class "sakana-box-r"
+                scale: .5,               // Tỷ lệ kích thước: 50%
+                character: "chisato",    // Chọn nhân vật là "chisato"
+                canSwitchCharacter: false, // Không cho phép người dùng đổi nhân vật
+                inertia: .005,           // Quán tính
+                decay: 1                 // Độ suy giảm
+            });
+    </script>
 </body>
 </html>
+
 
 
