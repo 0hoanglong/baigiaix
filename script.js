@@ -161,7 +161,7 @@
                 const khoi = gradeContainer.dataset.khoi; // Lấy giá trị từ data-khoi, ví dụ: '12'
 
                 // Dựng URL theo mẫu
-                const pdfBaseUrl = `http://giaitoan.byethost17.com/Bai_giai_De_${de}_90_phut_Toan_${khoi}.pdf`;
+                const pdfBaseUrl = `http://giaitoan.byethost17.com/De_${de}_90_phut_Toan_${khoi}.pdf`;
                 const viewerUrl = `https://docs.google.com/gview?url=${pdfBaseUrl}&embedded=true`;
 
                 // Cập nhật src của iframe và hiển thị bảng thông báo
@@ -237,4 +237,5 @@
                 themeToggleButton.textContent = '🌙';
             }
             localStorage.setItem('theme', theme);
+
         });
