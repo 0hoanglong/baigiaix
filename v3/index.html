@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ phân tích đáp án</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --primary-glow-color: #00bfff;
+            /* Deep Sky Blue */
+            --secondary-glow-color: #ff00ff;
+            /* Magenta */
+            --text-color: #e0e0e0;
+            --container-bg: #1e1e1e;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-glow-color);
+            text-shadow: 0 0 5px var(--primary-glow-color), 0 0 10px var(--primary-glow-color);
+            margin-bottom: 2rem;
+        }
+
+        .selection-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .selection-container select {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 2px solid var(--primary-glow-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--primary-glow-color);
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300bfff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .selection-container select:focus {
+            outline: none;
+            border-color: var(--secondary-glow-color);
+            box-shadow: 0 0 12px var(--secondary-glow-color);
+        }
+
+        #go-button {
+            flex-basis: 100px; /* Chiều rộng cố định cho nút Go */
+            margin: 0;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 2px solid var(--primary-glow-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            box-shadow: 0 0 8px var(--primary-glow-color), 0 0 12px var(--primary-glow-color) inset;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-glow-color);
+            box-shadow: 0 0 12px var(--secondary-glow-color), 0 0 18px var(--secondary-glow-color) inset;
+        }
+
+        button {
+            display: block;
+            width: 50%;
+            margin: 25px auto;
+            padding: 12px;
+            background-color: transparent;
+            border: 2px solid var(--secondary-glow-color);
+            border-radius: 8px;
+            color: var(--secondary-glow-color);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px var(--secondary-glow-color);
+            box-shadow: 0 0 8px var(--secondary-glow-color);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary-glow-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--secondary-glow-color), 0 0 25px var(--secondary-glow-color);
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--container-bg);
+            border: 1px solid #333;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        #output p {
+            font-weight: bold;
+            color: var(--primary-glow-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #444;
+        }
+
+        .help-link {
+            display: block;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            /* text-decoration: none; */
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+        }
+
+        .help-link:hover {
+            color: var(--primary-glow-color);
+            text-shadow: 0 0 5px var(--primary-glow-color);
+            opacity: 1;
+        }
+
+        /* --- Tối ưu cho di động --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+                align-items: flex-start; /* Căn lề trên cùng để dễ cuộn */
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .selection-container {
+                flex-direction: column; /* Xếp chồng các control theo chiều dọc */
+                align-items: stretch;   /* Kéo dài cho vừa chiều rộng */
+            }
+
+            button {
+                width: 90%; /* Làm cho nút chính rộng hơn */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Công cụ Phân tích Đáp án</h1>
+
+        <div class="selection-container">
+            <select id="grade-select">
+                <option value="">-- Chọn Lớp --</option>
+                <option value="12">Lớp 12</option>
+                <option value="11">Lớp 11</option>
+                <option value="10">Lớp 10</option>
+            </select>
+            <select id="test-select">
+                <option value="">-- Chọn Đề --</option>
+                <option value="A">Đề A</option><option value="B">Đề B</option><option value="C">Đề C</option><option value="D">Đề D</option><option value="E">Đề E</option><option value="F">Đề F</option><option value="G">Đề G</option><option value="H">Đề H</option>
+            </select>
+            <button id="go-button" onclick="fetchAnswers()">Go</button>
+        </div>
+        <a href="huongdan.html" class="help-link" target="_blank">Bạn không biết làm? Xem hướng dẫn</a>
+        <textarea name="" id="dapan" rows="10" placeholder="Nhập dữ liệu đáp án vào đây..."></textarea>
+        <button onclick="getData()">Phân tích</button>
+        <div id="output">
+            <div id="phan-1">
+                <p>Phần 1:</p>
+            </div>
+            <div id="phan-2">
+                <p>Phần 2:</p>
+            </div>
+            <div id="phan-3">
+                <p>Phần 3:</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function fetchAnswers() {
+            const lop = document.getElementById('grade-select').value;
+            const de = document.getElementById('test-select').value;
+
+            if (!lop || !de) {
+                alert('Vui lòng chọn đầy đủ Lớp và Đề!');
+                return;
+            }
+
+            const url = `https://giaitoan.byethost17.com/get_content.php?type=answers&title=De_${de}_90_phut_Toan_${lop}`;
+
+            // Mở URL trong một tab mới
+            window.open(url, '_blank');
+        }
+
+        /**
+         * Phân tích dữ liệu đáp án từ textarea
+         */
+        function getData() {
+            // Lấy dữ liệu từ textarea và loại bỏ khoảng trắng thừa
+            const rawData = document.getElementById('dapan').value.trim();
+            if (!rawData) {
+                alert("Vui lòng nhập dữ liệu đáp án!");
+                return;
+            }
+
+            // Tách dữ liệu thành các dòng
+            const lines = rawData.split('\n');
+
+            // Lấy các div output
+            const output1 = document.getElementById('phan-1');
+            const output2 = document.getElementById('phan-2');
+            const output3 = document.getElementById('phan-3');
+
+            // Reset nội dung cũ
+            output1.innerHTML = '<p>Phần 1:</p>';
+            output2.innerHTML = '<p>Phần 2:</p>';
+            output3.innerHTML = '<p>Phần 3:</p>';
+
+            // --- Xử lý Phần 1 (dòng 1) ---
+            if (lines.length > 0) {
+                const map1 = ['A', 'B', 'C', 'D'];
+                const answers1 = lines[0].split(',').map(item => item.trim());
+                let result1 = '';
+                answers1.forEach((ans, index) => {
+                    const choice = map1[parseInt(ans)] || 'Không xác định';
+                    result1 += `<span>Câu ${index + 1}: ${choice}</span><br>`;
+                });
+                output1.innerHTML += result1;
+            }
+
+            // --- Xử lý Phần 2 (dòng 2 đến 5) ---
+            if (lines.length > 4) {
+                const part2Lines = lines.slice(1, 5);
+                let result2 = '';
+                part2Lines.forEach((line, lineIndex) => {
+                    const answers2 = line.split(',').map(item => item.trim().toUpperCase());
+                    const convertedAnswers = answers2.map(ans => ans === 'S' ? 'Sai' : (ans === 'Ð' || ans === 'Đ' ? 'Đúng' : 'Không xác định')).join(', ');
+                    result2 += `<span>Câu ${lineIndex + 1}: ${convertedAnswers}</span><br>`;
+                });
+                output2.innerHTML += result2;
+            }
+
+            // --- Xử lý Phần 3 (dòng 6) ---
+            if (lines.length > 5) {
+                const answers3 = lines[5].split(',').map(item => item.trim());
+                let result3 = '';
+                answers3.forEach((ans, index) => {
+                    result3 += `<span>Câu ${index + 1}: ${ans}</span><br>`;
+                });
+                output3.innerHTML += result3;
+            }
+        }
+    </script>
+</body>
+
+</html>
