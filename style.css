@@ -9,12 +9,6 @@
             --white-color: #fff;
             --error-bg-color: #f8d7da;
             --error-text-color: #721c24;
-
-            /* Biến màu Neon cho các gói */
-            --neon-normal: hsl(186, 100%, 50%);
-            --neon-vip: hsl(250, 100%, 50%);
-            --neon-vip-plus: hsl(317, 100%, 50%);
-            --neon-admin: hsl(50, 100%, 50%);
         }
         *, *::before, *::after {
             box-sizing: border-box; /* Đảm bảo tính toán kích thước nhất quán */
@@ -54,7 +48,7 @@
             font-weight: 600;
             color: var(--light-text-color);
         }
-        input[type="text"], input[type="password"] {
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
@@ -108,19 +102,6 @@
         .password-wrapper input {
             margin-bottom: 0; /* Xóa margin của input */
             padding-right: 45px; /* Thêm không gian cho nút */
-        }
-        #toggle-password {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            width: 45px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: #777;
-            font-size: 1.2rem;
-            transform: translateY(-50%); /* Căn giữa theo chiều dọc */
-            height: 100%; /* Giữ lại để vùng click lớn */
         }
 
         /* --- Phần Nội dung & Chọn đề --- */
@@ -222,9 +203,6 @@
             text-align: center;
             z-index: 1001; /* Nằm trên cả lớp phủ modal */
         }
-        body.dark-mode #toggle-password {
-            color: #bbb; /* Làm cho icon mắt dễ nhìn hơn trên nền tối */
-        }
 
         /* --- Chủ đề Tối (Dark Mode) --- */
         body.dark-mode {
@@ -275,43 +253,6 @@
         }
         .register-link a:hover {
             text-decoration: underline;
-        }
-
-        /* --- Keyframes cho hiệu ứng Neon --- */
-        @keyframes neon-text-glow {
-            from {
-                text-shadow: 0 0 5px rgba(255,255,255,0.8), 0 0 10px var(--glow-color), 0 0 15px var(--glow-color);
-            }
-            to {
-                text-shadow: 0 0 10px rgba(255,255,255,0.9), 0 0 20px var(--glow-color), 0 0 30px var(--glow-color);
-            }
-        }
-
-        /* --- CSS cho màu Neon của tên người dùng --- */
-        #username-display {
-            font-weight: bold;
-            transition: color 0.3s, text-shadow 0.3s;
-        }
-        .package-normal {
-            color: #fff;
-            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
-        }
-        .package-vip {
-            color: #fff;
-            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
-        }
-        .package-vip-plus {
-            color: #fff;
-            animation: neon-text-glow 1.5s ease-in-out infinite alternate;
-        }
-        .package-admin {
-            color: var(--neon-admin);
-            text-shadow: 0 0 4px var(--neon-admin), 0 0 8px var(--neon-admin);
-        }
-        body.dark-mode #username-display {
-            /* Tăng cường độ sáng trên nền tối */
-            color: #fff; /* Giữ màu chữ trắng để hiệu ứng shadow nổi bật */
-            text-shadow: 0 0 6px var(--glow-color), 0 0 12px var(--glow-color), 0 0 18px var(--glow-color);
         }
 
         /* --- CSS cho nhân vật Sakana --- */
