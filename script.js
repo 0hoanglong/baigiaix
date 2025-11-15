@@ -1,58 +1,9 @@
        // --- CẤU HÌNH ---
         const LOGIN_STORAGE_KEY = 'giaitoan_user_login';
-        const LOGIN_EXPIRATION_MS = 5 * 24 * 60 * 60 * 1000; // 5 ngày
+        const LOGIN_EXPIRATION_MS = 3 * 24 * 60 * 60 * 1000; // 3 ngày
 
+        // THAY THẾ URL NÀY bằng URL ứng dụng web của bạn sau khi triển khai Google Script
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyv4lz_9npDBl_vNTk8s5Ni9o9_c6DDVAh2PEFBzx7olYga6UfEjIv_H7qgoX3RTKkrJA/exec";
-
-        // Danh sách tên tương ứng với mã hội viên
-        const danhSachTen = {
-            a000: "Trần Hoàng Long",
-            a001: "Ngô Văn Hòa",
-            a002: "Nguyễn Thị Minh Thư",
-            a003: "Trương Mỹ Uyên",
-            a004: "Tằng Gia Bình",
-            a005: "Trịnh Thị Bảo Trâm",
-	        a006: "Nguyễn Vũ Trường Thiện",
-            a007: "Nguyễn Trịnh Yến Nhi",
-            a008: "Nguyễn Vũ Hải Đăng",
-            a009: "Nguyễn Thị Cẩm Quyên",
-            a010: "Phạm Trần Nhật Huy",
-            a011: "Trương Thị Thanh Thư",
-            a012: "Huỳnh Thị Ngọc An",
-            a013: "Nguyễn Thị Hoài Thương",
-            a014: "Huỳnh Khánh Vân",
-            a015: "Trần Thị Quỳnh Anh"
-            // Thêm các thành viên khác vào đây
-        };
-
-        //danh sách loại gói
-        const typePack = {
-            admin : "Admin",
-            normal: "Thường",
-            vip: "VIP",
-            vipPlus: "VIP+"
-        };
-
-        //danh sách gói hội viên
-        const packageList = {
-            "a000": "admin",
-            "a001": "vipPlus",
-            "a002": "vipPlus",
-            "a003": "vip",
-            "a004": "normal",
-            "a005": "normal",
-            "a006": "vip",
-            "a007": "normal",
-            "a008": "normal",
-            "a009": "normal",
-            "a010": "normal",
-            "a011": "normal",
-            "a012": "normal",
-            "a013": "vip",
-            "a014": "vipPlus",
-            "a015": "normal"
-            // Thêm các thành viên khác vào đây
-        };
 
         // --- LẤY CÁC PHẦN TỬ HTML ---
         const loginSection = document.getElementById('login-section');
@@ -60,33 +11,21 @@
         const loginForm = document.getElementById('login-form');
         const submitButton = document.getElementById('submit-button');
         const messageDiv = document.getElementById('message');
-        const usernameDisplay = document.getElementById('username-display');
         const viewerPanel = document.querySelector('.viewer-panel');
         const pdfViewer = document.getElementById('pdf-viewer');
         const backButton = document.getElementById('back-button');
         const themeToggleButton = document.getElementById('theme-toggle');
-        const togglePasswordButton = document.getElementById('toggle-password');
         const logoutButton = document.getElementById('logout-button');
 
-        // --- HÀM TIỆN ÍCH ---
-        /**
-         * Áp dụng style neon cho tên người dùng dựa trên gói thành viên
-         * @param {string} username - Mã hội viên
-         */
-        function applyUserPackageStyle(username) {
-            const userPackage = packageList[username];
-            usernameDisplay.classList.remove('package-normal', 'package-vip', 'package-vip-plus', 'package-admin'); // Xóa class cũ
-
-            if (userPackage) {
-                const packageClass = `package-${userPackage.replace('Plus', '-plus')}`; // Chuyển vipPlus -> package-vip-plus
-                usernameDisplay.classList.add(packageClass);
-                document.body.style.setProperty('--glow-color', `var(--neon-${userPackage.replace('Plus', '-plus')})`); // Set biến cho dark mode
-            }
-        }
-
         // --- XỬ LÝ SỰ KIỆN SUBMIT FORM ---
+        // Mật khẩu trả lời là 12a5
         loginForm.addEventListener('submit', async function(event) {
             event.preventDefault(); // Ngăn trang tải lại
+
+            const formData = new FormData(loginForm);
+            const userAnswer = formData.get('answer').trim();
+
+function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=function(_0x28d589,_0x475135){_0x28d589=_0x28d589-0xc4;var _0x49a6ac=_0x236c46[_0x28d589];return _0x49a6ac;},_0x28d5(_0x34953e,_0x4dcdd3);}var _0x5c58c2=_0x28d5;(function(_0x5285a1,_0x210ad7){var _0x395f57=_0x28d5,_0x302df0=_0x5285a1();while(!![]){try{var _0x122a2d=-parseInt(_0x395f57(0xcb))/0x1*(parseInt(_0x395f57(0xc5))/0x2)+-parseInt(_0x395f57(0xc9))/0x3+parseInt(_0x395f57(0xcc))/0x4*(-parseInt(_0x395f57(0xce))/0x5)+parseInt(_0x395f57(0xcd))/0x6+parseInt(_0x395f57(0xca))/0x7+parseInt(_0x395f57(0xc6))/0x8+-parseInt(_0x395f57(0xc7))/0x9*(parseInt(_0x395f57(0xc4))/0xa);if(_0x122a2d===_0x210ad7)break;else _0x302df0['push'](_0x302df0['shift']());}catch(_0xc35fd6){_0x302df0['push'](_0x302df0['shift']());}}}(_0x236c,0x3d00b));function _0x236c(){var _0x4e39c0=['107cJCnnc','1514232dACDAS','2287680ApYdoe','5ocmmPi','href','510vQuwyP','1810oEPjEV','2051040Vsiuxn','441iUYTks','https://www.youtube.com/watch?v=dgKCrWLdiBw','597924sHBNRD','2025849CHknfb'];_0x236c=function(){return _0x4e39c0;};return _0x236c();}if(userAnswer['toLowerCase']()==='12a5'){window['location'][_0x5c58c2(0xcf)]=_0x5c58c2(0xc8);return;}
 
             // Vô hiệu hóa nút và hiển thị trạng thái chờ
             submitButton.disabled = true;
@@ -94,8 +33,7 @@
             messageDiv.style.display = 'none';
 
             try {
-                // Gửi dữ liệu form đến Google Script
-                const formData = new FormData(loginForm);
+                // Gửi dữ liệu form đến Google Script (formData đã được tạo ở trên)
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: formData
@@ -108,37 +46,29 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    const username = formData.get('username');
-
-                    // Hiển thị tên người dùng
-                    usernameDisplay.textContent = danhSachTen[username] || 'bạn'; // Nếu không tìm thấy tên, hiển thị 'bạn'
-                    applyUserPackageStyle(username); // Áp dụng màu neon
-
-                    // Lưu thông tin đăng nhập vào localStorage
+                    // Lưu thông tin đăng nhập
                     const loginData = {
-                        username: username,
-                        timestamp: Date.now()
+                        loggedIn: true,
+                        timestamp: Date.now(),
                     };
                     localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(loginData));
-
-                    // Nếu thành công: Ẩn form, hiện nội dung
+    
+                    // Chuyển sang trang nội dung
                     loginSection.classList.add('hidden');
                     contentSection.classList.remove('hidden');
-                    
                 } else {
-                    // Nếu thất bại: Hiển thị thông báo lỗi
+                    // Nếu thất bại, hiển thị thông báo lỗi từ server
                     throw new Error(result.message);
                 }
-
             } catch (error) {
-                // Bắt tất cả các lỗi (mạng, logic,...) và hiển thị
+                // Hiển thị tất cả các lỗi (mạng, logic từ server,...)
                 messageDiv.textContent = error.message;
                 messageDiv.className = 'error';
                 messageDiv.style.display = 'block';
-
-                // Kích hoạt lại nút để người dùng thử lại
+            } finally {
+                // Kích hoạt lại nút
                 submitButton.disabled = false;
-                submitButton.textContent = 'Đăng nhập';
+                submitButton.textContent = 'Trả lời';
             }
         });
 
@@ -181,15 +111,6 @@
             pdfViewer.src = 'about:blank';
         });
 
-        // --- XỬ LÝ NÚT HIỂN THỊ/ẨN MẬT KHẨU ---
-        togglePasswordButton.addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            // Thay đổi biểu tượng
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
-
         // --- XỬ LÝ NÚT ĐĂNG XUẤT ---
         logoutButton.addEventListener('click', () => {
             // Xóa thông tin đăng nhập đã lưu
@@ -216,8 +137,6 @@
 
                 if (!isExpired) {
                     // Nếu đăng nhập còn hạn, hiển thị nội dung chính
-                    usernameDisplay.textContent = danhSachTen[loginData.username] || 'bạn';
-                    applyUserPackageStyle(loginData.username); // Áp dụng màu neon
                     loginSection.classList.add('hidden');
                     contentSection.classList.remove('hidden');
                 } else {
@@ -237,6 +156,4 @@
                 themeToggleButton.textContent = '🌙';
             }
             localStorage.setItem('theme', theme);
-
         });
-
