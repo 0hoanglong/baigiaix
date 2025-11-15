@@ -1,38 +1,34 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GiaiToanX</title>
+    <title>Đăng nhập</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <button id="theme-toggle" title="Chuyển chế độ Sáng/Tối">🌙</button>
     <div class="container">
         <!-- 1. PHẦN ĐĂNG NHẬP (HIỂN THỊ BAN ĐẦU) -->
         <div id="login-section" class="">
-            <h2>Đăng nhập</h2>
+            <h2>Hãy trả lời câu hỏi!</h2>
             <form id="login-form">
-                <label for="username">Mã Hội Viên:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="answer">Con bò có biết bay không?</label>
+                <input type="text" id="answer" name="answer" required autocomplete="off" placeholder="Có hay không">
 
-                <label for="password">Mật khẩu:</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" name="password" required autocomplete="current-password">
-                    <button type="button" id="toggle-password" title="Hiển thị/Ẩn mật khẩu">👁️</button>
-                </div>
-                
-                <button type="submit" id="submit-button">Đăng nhập</button>
+                <button type="submit" id="submit-button">Trả lời</button>
             </form>
             <div class="register-link">
-                <a href="dangky/dangky.html" target="_blank" rel="noopener noreferrer">Chưa vào hội viên? Đăng ký</a>
+                <!-- <a href="/dangky/dangky.html" target="_blank" rel="noopener noreferrer">Chưa vào hội viên? Đăng ký</a> -->
             </div>
             <div id="message" class="error"></div>
         </div>
 
         <!-- 2. PHẦN NỘI DUNG (BỊ ẨN BAN ĐẦU) -->
         <div id="content-section" class="hidden">
-            <h2>Chào mừng, <span id="username-display"></span>!</h2>
+            <h2>Chọn bài</h2>
             <p>Vui lòng chọn đề bài bên dưới.</p>
 
             <!-- Phần chọn đề -->
@@ -59,8 +55,8 @@
                     </div>
                 </div>
             </div>
-            
-            <button id="logout-button">Đăng xuất</button>
+
+            <button id="logout-button">Gét outtt</button>
         </div>
 
         <!-- Bảng thông báo hiển thị PDF (Modal) -->
@@ -72,8 +68,9 @@
                 </div>
             </div>
         </div>
+
     </div>
-    
+
     <div id="sakana-modal">
         <div class="sakana-box-l"></div>
         <div class="sakana-box-r"></div>
@@ -82,7 +79,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sakana"></script>
     <script>
-        // Tắt âm thanh của nhân vật.
+                // Tắt âm thanh của nhân vật.
         Sakana.setMute(false);
 
         // Khởi tạo nhân vật thứ nhất (Takina)
@@ -104,9 +101,7 @@
                 decay: 1                 // Độ suy giảm
             });
     </script>
+
 </body>
+
 </html>
-
-
-
-
