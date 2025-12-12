@@ -90,8 +90,15 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
                 const gradeContainer = button.closest('.grade-selection');
                 const khoi = gradeContainer.dataset.khoi; // Lấy giá trị từ data-khoi, ví dụ: '12'
 
+                // Lấy loại được chọn từ select element
+                const typeSelect = document.getElementById('type-select');
+                const loai = typeSelect.value; // Lấy giá trị: '17' hoặc '14'
+                
+                // Xác định domain dựa trên loại
+                const domain = loai === '14' ? 'giaitoanthpt.byethost14.com' : 'giaitoan.byethost17.com';
+
                 // Dựng URL theo mẫu
-                const pdfBaseUrl = `https://giaitoan.byethost17.com/view_pdf.php?file=De_${de}_90_phut_Toan_${khoi}.pdf`;
+                const pdfBaseUrl = `https://${domain}/view_pdf.php?file=De_${de}_90_phut_Toan_${khoi}.pdf`;
                 const viewerUrl = `https://docs.google.com/gview?url=${pdfBaseUrl}&embedded=true`;
 
                 // Cập nhật src của iframe và hiển thị bảng thông báo
