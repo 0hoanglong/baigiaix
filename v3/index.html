@@ -188,6 +188,10 @@
         <h1>Công cụ Phân tích Đáp án</h1>
 
         <div class="selection-container">
+            <select id="type">
+                <option value="17">17</option>
+                <option value="14">14</option>
+            </select>
             <select id="grade-select">
                 <option value="">-- Chọn Lớp --</option>
                 <option value="12">Lớp 12</option>
@@ -198,7 +202,7 @@
                 <option value="">-- Chọn Đề --</option>
                 <option value="A">Đề A</option><option value="B">Đề B</option><option value="C">Đề C</option><option value="D">Đề D</option><option value="E">Đề E</option><option value="F">Đề F</option><option value="G">Đề G</option><option value="H">Đề H</option>
             </select>
-            <button id="go-button" onclick="fetchAnswers()">Go</button>
+            <button id="go-button" onclick="fetchAnswers()">Get</button>
         </div>
         <a href="huongdan.html" class="help-link" target="_blank">Bạn không biết làm? Xem hướng dẫn</a>
         <textarea name="" id="dapan" rows="10" placeholder="Nhập dữ liệu đáp án vào đây..."></textarea>
@@ -225,7 +229,11 @@
                 return;
             }
 
-            const url = `https://giaitoan.byethost17.com/get_content.php?type=answers&title=De_${de}_90_phut_Toan_${lop}`;
+            const type = document.getElementById('type').value;
+            let domain = 'giaitoan.byethost17.com';
+            if (type === '14') domain = 'giaitoanthpt.byethost14.com';
+            else if (type === '17') domain = 'giaitoan.byethost17.com';
+            const url = `https://${domain}/get_content.php?type=answers&title=De_${de}_90_phut_Toan_${lop}`;
 
             // Mở URL trong một tab mới
             window.open(url, '_blank');
