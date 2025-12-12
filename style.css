@@ -108,6 +108,24 @@
         #content-section {
             max-width: 900px; /* Mở rộng cho nội dung */
         }
+        
+        /* --- Phần chọn loại (Type Select) --- */
+        #type-select {
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: var(--white-color);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        body.dark-mode #type-select {
+            background-color: #333;
+            color: var(--text-color);
+            border-color: #555;
+        }
+        
         .grade-selection {
             margin-top: 20px;
         }
