@@ -259,7 +259,7 @@
         }
 
         /* --- Link Đăng ký --- */
-        .register-link {
+        /* .register-link {
             text-align: center;
             margin-top: 20px;
         }
@@ -271,29 +271,31 @@
         }
         .register-link a:hover {
             text-decoration: underline;
-        }
+        } */
 
         /* --- CSS cho nhân vật Sakana --- */
-        #sakana-modal {
-            position: fixed;
+        /* #sakana-modal {
+            position: fixed; */
             /* Đặt ở dưới chân trang */
-            bottom: 0;
+            /* bottom: 0;
             left: 0;
-            right: 0;
+            right: 0; */
             /* Dàn các nhân vật ra hai bên */
-            display: flex;
-            justify-content: space-between;
+            /* display: flex;
+            justify-content: space-between; */
             /* Đảm bảo luôn nổi lên trên */
-            z-index: 1002;
+            /* z-index: 1002; */
             /* Cho phép click xuyên qua vùng trống */
-            pointer-events: none;
-        }
+            /* pointer-events: none; */
+        /* } */
 
-        .sakana-box-l, .sakana-box-r {
-            pointer-events: auto; /* Cho phép tương tác với nhân vật */
-        }
+        /* Cho phép tương tác với nhân vật */
+        /* .sakana-box-l, .sakana-box-r {
+            pointer-events: auto; 
+        } */
 
         /* Ẩn nhân vật trên màn hình nhỏ (Mobile) - Đặt ở cuối để ghi đè */
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             #sakana-modal { display: none !important; }
-        }
+        } */
+
