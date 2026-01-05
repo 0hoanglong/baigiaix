@@ -188,6 +188,10 @@
         <h1>Công cụ Phân tích Đáp án</h1>
 
         <div class="selection-container">
+            <select id="mode">
+                <option value="1">Loại 1</option>
+                <option value="2">Loại 2</option>
+            </select>
             <select id="type">
                 <option value="17">17</option>
                 <option value="14">14</option>
@@ -223,6 +227,7 @@
         function fetchAnswers() {
             const lop = document.getElementById('grade-select').value;
             const de = document.getElementById('test-select').value;
+            const mode = document.getElementById('mode').value;
 
             if (!lop || !de) {
                 alert('Vui lòng chọn đầy đủ Lớp và Đề!');
@@ -233,7 +238,11 @@
             let domain = 'giaitoan.byethost17.com';
             if (type === '14') domain = 'giaitoanthpt.byethost14.com';
             else if (type === '17') domain = 'giaitoan.byethost17.com';
-            const url = `https://${domain}/get_content.php?type=answers&title=De_${de}_90_phut_Toan_${lop}`;
+            
+            let url = `https://${domain}/get_content.php?type=answers&title=De_${de}_90_phut_Toan_${lop}`;
+            if (mode === '2') {
+                url = `https://${domain}/check_deadline.php?id=De_${de}_90_phut_Toan_${lop}`;
+            }
 
             // Mở URL trong một tab mới
             window.open(url, '_blank');
@@ -243,15 +252,13 @@
          * Phân tích dữ liệu đáp án từ textarea
          */
         function getData() {
+            const mode = document.getElementById('mode').value;
             // Lấy dữ liệu từ textarea và loại bỏ khoảng trắng thừa
             const rawData = document.getElementById('dapan').value.trim();
             if (!rawData) {
                 alert("Vui lòng nhập dữ liệu đáp án!");
                 return;
             }
-
-            // Tách dữ liệu thành các dòng
-            const lines = rawData.split('\n');
 
             // Lấy các div output
             const output1 = document.getElementById('phan-1');
@@ -263,43 +270,83 @@
             output2.innerHTML = '<p>Phần 2:</p>';
             output3.innerHTML = '<p>Phần 3:</p>';
 
-            // --- Xử lý Phần 1 (dòng 1) ---
-            if (lines.length > 0) {
-                const map1 = ['A', 'B', 'C', 'D'];
-                const answers1 = lines[0].split(',').map(item => item.trim());
-                let result1 = '';
-                answers1.forEach((ans, index) => {
-                    const choice = map1[parseInt(ans)] || 'Không xác định';
-                    result1 += `<span>Câu ${index + 1}: ${choice}</span><br>`;
-                });
-                output1.innerHTML += result1;
-            }
+            if (mode === '2') {
+                try {
+                    const data = JSON.parse(rawData);
+                    const answers = data.answers;
+                    const map1 = ['A', 'B', 'C', 'D'];
 
-            // --- Xử lý Phần 2 (dòng 2 đến 5) ---
-            if (lines.length > 4) {
-                const part2Lines = lines.slice(1, 5);
-                let result2 = '';
-                part2Lines.forEach((line, lineIndex) => {
-                    const answers2 = line.split(',').map(item => item.trim().toUpperCase());
-                    const convertedAnswers = answers2.map(ans => ans === 'S' ? 'Sai' : (ans === 'Ð' || ans === 'Đ' ? 'Đúng' : 'Không xác định')).join(', ');
-                    result2 += `<span>Câu ${lineIndex + 1}: ${convertedAnswers}</span><br>`;
-                });
-                output2.innerHTML += result2;
-            }
+                    if (answers && answers.part1) {
+                        let result1 = '';
+                        answers.part1.forEach((ans, index) => {
+                            const choice = map1[parseInt(ans)] || 'Không xác định';
+                            result1 += `<span>Câu ${index + 1}: ${choice}</span><br>`;
+                        });
+                        output1.innerHTML += result1;
+                    }
 
-            // --- Xử lý Phần 3 (dòng 6) ---
-            if (lines.length > 5) {
-                const answers3 = lines[5].split(',').map(item => item.trim());
-                let result3 = '';
-                answers3.forEach((ans, index) => {
-                    result3 += `<span>Câu ${index + 1}: ${ans}</span><br>`;
-                });
-                output3.innerHTML += result3;
+                    if (answers && answers.part2) {
+                        let result2 = '';
+                        answers.part2.forEach((row, lineIndex) => {
+                            const convertedAnswers = row.map(ans => {
+                                const u = ans.toUpperCase();
+                                return u === 'S' ? 'Sai' : (u === 'Ð' || u === 'Đ' ? 'Đúng' : 'Không xác định');
+                            }).join(', ');
+                            result2 += `<span>Câu ${lineIndex + 1}: ${convertedAnswers}</span><br>`;
+                        });
+                        output2.innerHTML += result2;
+                    }
+
+                    if (answers && answers.part3) {
+                        let result3 = '';
+                        answers.part3.forEach((ans, index) => {
+                            result3 += `<span>Câu ${index + 1}: ${ans}</span><br>`;
+                        });
+                        output3.innerHTML += result3;
+                    }
+                } catch (e) {
+                    alert("Lỗi phân tích JSON: " + e.message);
+                }
+            } else {
+                // Tách dữ liệu thành các dòng (Mode 1)
+                const lines = rawData.split('\n');
+
+                // --- Xử lý Phần 1 (dòng 1) ---
+                if (lines.length > 0) {
+                    const map1 = ['A', 'B', 'C', 'D'];
+                    const answers1 = lines[0].split(',').map(item => item.trim());
+                    let result1 = '';
+                    answers1.forEach((ans, index) => {
+                        const choice = map1[parseInt(ans)] || 'Không xác định';
+                        result1 += `<span>Câu ${index + 1}: ${choice}</span><br>`;
+                    });
+                    output1.innerHTML += result1;
+                }
+
+                // --- Xử lý Phần 2 (dòng 2 đến 5) ---
+                if (lines.length > 4) {
+                    const part2Lines = lines.slice(1, 5);
+                    let result2 = '';
+                    part2Lines.forEach((line, lineIndex) => {
+                        const answers2 = line.split(',').map(item => item.trim().toUpperCase());
+                        const convertedAnswers = answers2.map(ans => ans === 'S' ? 'Sai' : (ans === 'Ð' || ans === 'Đ' ? 'Đúng' : 'Không xác định')).join(', ');
+                        result2 += `<span>Câu ${lineIndex + 1}: ${convertedAnswers}</span><br>`;
+                    });
+                    output2.innerHTML += result2;
+                }
+
+                // --- Xử lý Phần 3 (dòng 6) ---
+                if (lines.length > 5) {
+                    const answers3 = lines[5].split(',').map(item => item.trim());
+                    let result3 = '';
+                    answers3.forEach((ans, index) => {
+                        result3 += `<span>Câu ${index + 1}: ${ans}</span><br>`;
+                    });
+                    output3.innerHTML += result3;
+                }
             }
         }
     </script>
 </body>
 
 </html>
-
-
