@@ -1,9 +1,10 @@
        // --- CẤU HÌNH ---
         const LOGIN_STORAGE_KEY = 'giaitoan_user_login';
+        const CONFIG_STORAGE_KEY = 'giaitoan_server_config'; // Key mới để lưu cấu hình domain
         const LOGIN_EXPIRATION_MS = 3 * 24 * 60 * 60 * 1000; // 3 ngày
 
         // THAY THẾ URL NÀY bằng URL ứng dụng web của bạn sau khi triển khai Google Script
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyv4lz_9npDBl_vNTk8s5Ni9o9_c6DDVAh2PEFBzx7olYga6UfEjIv_H7qgoX3RTKkrJA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOzWj9ux6acDDaZvo0vGddG6KC3xgdfkf6rXRzpkaedbyeXc1ka2ax-IBW903ZsfalOA/exec";
 
         // --- LẤY CÁC PHẦN TỬ HTML ---
         const loginSection = document.getElementById('login-section');
@@ -16,6 +17,22 @@
         const backButton = document.getElementById('back-button');
         const themeToggleButton = document.getElementById('theme-toggle');
         const logoutButton = document.getElementById('logout-button');
+        // Flag xác định viewer được mở từ URL query
+        let openedViaQuery = false;
+
+        // --- HÀM CẬP NHẬT SELECT BOX TỪ CẤU HÌNH ---
+        function updateTypeSelect(config) {
+            const typeSelect = document.getElementById('type-select');
+            if (!typeSelect || !config || !Array.isArray(config)) return;
+            
+            typeSelect.innerHTML = ''; // Xóa cũ
+            config.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.id; // Hoặc item.name nếu bạn thêm tên vào config
+                typeSelect.appendChild(option);
+            });
+        }
 
         // --- XỬ LÝ SỰ KIỆN SUBMIT FORM ---
         // Mật khẩu trả lời là 12a5
@@ -44,6 +61,7 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
                 }
 
                 const result = await response.json();
+                console.log("Server response:", result); // Kiểm tra dữ liệu trả về từ Google Script
 
                 if (result.status === 'success') {
                     // Lưu thông tin đăng nhập
@@ -52,6 +70,10 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
                         timestamp: Date.now(),
                     };
                     localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(loginData));
+
+                    // Lưu cấu hình server trả về và cập nhật giao diện
+                    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(result.config));
+                    updateTypeSelect(result.config);
     
                     // Chuyển sang trang nội dung
                     loginSection.classList.add('hidden');
@@ -94,8 +116,12 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
                 const typeSelect = document.getElementById('type-select');
                 const loai = typeSelect.value; // Lấy giá trị: '17' hoặc '14'
                 
-                // Xác định domain dựa trên loại
-                const domain = loai === '14' ? 'giaitoanthpt.byethost14.com' : 'giaitoan.byethost17.com';
+                // Xác định domain dựa trên cấu hình đã lưu
+                const savedConfig = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || '[]');
+                const selectedServer = savedConfig.find(item => item.id === loai);
+                
+                // Nếu tìm thấy trong config thì dùng, không thì mặc định (fallback)
+                let domain = selectedServer ? selectedServer.domain : 'giaitoan.byethost17.com';
 
                 // Dựng URL theo mẫu
                 const pdfBaseUrl = `https://${domain}/view_pdf.php?file=De_${de}_90_phut_Toan_${khoi}.pdf`;
@@ -116,12 +142,62 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
             });
             // Dừng tải iframe để tiết kiệm tài nguyên
             pdfViewer.src = 'about:blank';
+
+            // Nếu viewer được mở từ URL query, kiểm tra trạng thái đăng nhập đã lưu
+            if (openedViaQuery) {
+                try {
+                    const saved = localStorage.getItem(LOGIN_STORAGE_KEY);
+                    let showContent = false;
+
+                    if (saved) {
+                        try {
+                            const loginData = JSON.parse(saved);
+                            const isExpired = (Date.now() - loginData.timestamp) > LOGIN_EXPIRATION_MS;
+                            if (!isExpired && loginData.loggedIn) {
+                                showContent = true; // vẫn hợp lệ -> hiển thị nội dung
+                            }
+                        } catch (e) {
+                            // parse error -> coi như không đăng nhập
+                            console.warn('Invalid saved login data, forcing re-login');
+                        }
+                    }
+
+                    // Xóa query params khỏi URL để tránh tự động mở lại viewer
+                    history.replaceState(null, '', location.pathname + location.hash);
+                    openedViaQuery = false;
+
+                    if (showContent) {
+                        // Hiển thị nội dung chính (bỏ qua form)
+                        if (loginSection) loginSection.classList.add('hidden');
+                        if (contentSection) contentSection.classList.remove('hidden');
+                    } else {
+                        // Không có đăng nhập hợp lệ -> yêu cầu trả lời lại
+                        localStorage.removeItem(LOGIN_STORAGE_KEY);
+                        localStorage.removeItem(CONFIG_STORAGE_KEY);
+                        if (loginSection) loginSection.classList.remove('hidden');
+                        if (contentSection) contentSection.classList.add('hidden');
+                    }
+                } catch (e) {
+                    console.error('Error handling back after query-view:', e);
+                    // Fallback: show login
+                    localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    if (loginSection) loginSection.classList.remove('hidden');
+                    if (contentSection) contentSection.classList.add('hidden');
+                    openedViaQuery = false;
+                }
+            } else {
+                // Nếu không mở từ query (người dùng bấm chọn trong giao diện),
+                // trở về giao diện nội dung chứ không hiện khung trả lời
+                if (loginSection) loginSection.classList.add('hidden');
+                if (contentSection) contentSection.classList.remove('hidden');
+            }
         });
 
         // --- XỬ LÝ NÚT ĐĂNG XUẤT ---
         logoutButton.addEventListener('click', () => {
             // Xóa thông tin đăng nhập đã lưu
             localStorage.removeItem(LOGIN_STORAGE_KEY);
+            localStorage.removeItem(CONFIG_STORAGE_KEY);
             // Tải lại trang để quay về màn hình đăng nhập
             window.location.reload();
         });
@@ -146,10 +222,44 @@ function _0x28d5(_0x34953e,_0x4dcdd3){var _0x236c46=_0x236c();return _0x28d5=fun
                     // Nếu đăng nhập còn hạn, hiển thị nội dung chính
                     loginSection.classList.add('hidden');
                     contentSection.classList.remove('hidden');
+
+                    // Khôi phục cấu hình server vào select box
+                    const savedConfig = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY));
+                    if (savedConfig) updateTypeSelect(savedConfig);
                 } else {
                     // Nếu hết hạn, xóa thông tin đã lưu
                     localStorage.removeItem(LOGIN_STORAGE_KEY);
+                    localStorage.removeItem(CONFIG_STORAGE_KEY);
                 }
+            }
+        })();
+
+        // --- HIỆN PDF NGAY KHI URL CÓ QUERY PARAMS ---
+        (function showPdfFromQuery() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const title = params.get('title'); // ví dụ: De_A_90_phut_Toan_12
+                if (!title) return; // không có title -> không làm gì
+
+                let type = params.get('type');
+                // Xác định domain từ config đã lưu (nếu có)
+                const savedConfig = JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || '[]');
+                const selectedServer = savedConfig.find(item => item.id === type);
+                let domain = selectedServer ? selectedServer.domain : 'giaitoan.byethost17.com';
+
+                if (!pdfViewer || !viewerPanel) return;
+
+                const pdfBaseUrl = `https://${domain}/view_pdf.php?file=${encodeURIComponent(title)}.pdf`;
+                const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(pdfBaseUrl)}&embedded=true`;
+
+                // Bỏ qua màn hình đăng nhập và hiển thị trực tiếp viewer
+                if (loginSection) loginSection.classList.add('hidden');
+
+                pdfViewer.src = viewerUrl;
+                viewerPanel.classList.add('visible');
+                openedViaQuery = true; // đánh dấu viewer được mở từ query
+            } catch (e) {
+                console.error('Error showing PDF from query:', e);
             }
         })();
 
